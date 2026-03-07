@@ -48,7 +48,7 @@ export default function Questionario() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [enviando, setEnviando] = useState(false);
   const [mensagemErro, setMensagemErro] = useState("");
-  const [mensagemSucesso, setMensagemSucesso] = useState("");
+  const [finalizado, setFinalizado] = useState(false);
 
   const totalEtapas = 5;
   const progresso = (etapa / totalEtapas) * 100;
@@ -165,7 +165,6 @@ export default function Questionario() {
     if (etapa < totalEtapas) {
       setEtapa((prev) => prev + 1);
       setMensagemErro("");
-      setMensagemSucesso("");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -174,7 +173,6 @@ export default function Questionario() {
     if (etapa > 1) {
       setEtapa((prev) => prev - 1);
       setMensagemErro("");
-      setMensagemSucesso("");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -182,7 +180,6 @@ export default function Questionario() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMensagemErro("");
-    setMensagemSucesso("");
 
     if (!validarEtapa()) return;
 
@@ -198,7 +195,9 @@ export default function Questionario() {
           telefone_whatsapp: formData.telefone_whatsapp.trim(),
           motivo_consulta: formData.motivo_consulta,
           tempo_queixa: formData.tempo_queixa,
-          intensidade: formData.intensidade ? Number(formData.intensidade) : null,
+          intensidade: formData.intensidade
+            ? Number(formData.intensidade)
+            : null,
           diagnostico_medico:
             formData.possui_diagnostico === "Sim"
               ? formData.diagnostico_medico.trim()
@@ -219,11 +218,7 @@ export default function Questionario() {
         throw error;
       }
 
-      setMensagemSucesso(
-        "Questionário enviado com sucesso. Obrigada pelas informações."
-      );
-      setFormData(initialFormData);
-      setEtapa(1);
+      setFinalizado(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Erro ao enviar questionário:", error);
@@ -234,6 +229,95 @@ export default function Questionario() {
       setEnviando(false);
     }
   };
+
+  if (finalizado) {
+    return (
+      <main className="min-h-screen bg-[#e9eaec] text-slate-800">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.85),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(203,213,225,0.45),transparent_30%)]" />
+
+          <div className="relative mx-auto flex min-h-screen max-w-4xl items-center justify-center px-6 py-10 md:px-8">
+            <div className="w-full rounded-[32px] border border-white/60 bg-white/65 p-8 text-center shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-xl md:p-12">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 shadow-sm">
+                <svg
+                  className="h-10 w-10 text-emerald-600"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </div>
+
+              <p className="mt-6 text-sm font-medium uppercase tracking-[0.22em] text-slate-500">
+                Questionário finalizado
+              </p>
+
+              <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+                Recebemos suas informações com sucesso.
+              </h1>
+
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
+                Obrigada por preencher o questionário pré-consulta. Suas
+                respostas foram enviadas com segurança e irão contribuir para um
+                atendimento mais objetivo, cuidadoso e individualizado.
+              </p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+                    Status
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-slate-800">
+                    Enviado com sucesso
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+                    Segurança
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-slate-800">
+                    Dados tratados com sigilo
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+                    Próximo passo
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-slate-800">
+                    Avaliação pela médica
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:bg-slate-800"
+                >
+                  Voltar para o início
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white/80 px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-white"
+                >
+                  Salvar comprovante
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#e9eaec] text-slate-800">
@@ -282,12 +366,6 @@ export default function Questionario() {
           {mensagemErro && (
             <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {mensagemErro}
-            </div>
-          )}
-
-          {mensagemSucesso && (
-            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-              {mensagemSucesso}
             </div>
           )}
 
@@ -647,7 +725,7 @@ export default function Questionario() {
                   disabled={enviando}
                   className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {enviando ? "Enviando..." : "Enviar questionário"}
+                  {enviando ? "Enviando..." : "Finalizar questionário"}
                 </button>
               )}
             </div>
