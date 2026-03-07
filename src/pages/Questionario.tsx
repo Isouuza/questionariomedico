@@ -1,19 +1,238 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+
+type FormData = {
+  nome_completo: string;
+  idade: string;
+  cidade_estado: string;
+  profissao: string;
+  telefone_whatsapp: string;
+  motivo_consulta: string;
+  tempo_queixa: string;
+  intensidade: string;
+  possui_diagnostico: string;
+  diagnostico_medico: string;
+  usa_medicacao: string;
+  medicacao_continua: string;
+  sono: string;
+  atividade_fisica: string;
+  consumo_alcool: string;
+  tabagismo: string;
+  consentimento: boolean;
+};
+
+const initialFormData: FormData = {
+  nome_completo: "",
+  idade: "",
+  cidade_estado: "",
+  profissao: "",
+  telefone_whatsapp: "",
+  motivo_consulta: "",
+  tempo_queixa: "",
+  intensidade: "",
+  possui_diagnostico: "",
+  diagnostico_medico: "",
+  usa_medicacao: "",
+  medicacao_continua: "",
+  sono: "",
+  atividade_fisica: "",
+  consumo_alcool: "",
+  tabagismo: "",
+  consentimento: false,
+};
 
 export default function Questionario() {
   const navigate = useNavigate();
   const [etapa, setEtapa] = useState(1);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [enviando, setEnviando] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState("");
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   const totalEtapas = 5;
   const progresso = (etapa / totalEtapas) * 100;
 
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const validarEtapa = () => {
+    setMensagemErro("");
+
+    if (etapa === 1) {
+      if (!formData.nome_completo.trim()) {
+        setMensagemErro("Preencha o nome completo.");
+        return false;
+      }
+
+      if (!formData.idade.trim()) {
+        setMensagemErro("Preencha a idade.");
+        return false;
+      }
+
+      if (!formData.cidade_estado.trim()) {
+        setMensagemErro("Preencha cidade / estado.");
+        return false;
+      }
+
+      if (!formData.telefone_whatsapp.trim()) {
+        setMensagemErro("Preencha telefone / WhatsApp.");
+        return false;
+      }
+    }
+
+    if (etapa === 2) {
+      if (!formData.motivo_consulta) {
+        setMensagemErro("Selecione o motivo da consulta.");
+        return false;
+      }
+
+      if (!formData.tempo_queixa) {
+        setMensagemErro("Selecione há quanto tempo isso acontece.");
+        return false;
+      }
+
+      if (!formData.intensidade.trim()) {
+        setMensagemErro("Informe a intensidade de 0 a 10.");
+        return false;
+      }
+    }
+
+    if (etapa === 3) {
+      if (!formData.possui_diagnostico) {
+        setMensagemErro("Informe se possui diagnóstico médico.");
+        return false;
+      }
+
+      if (!formData.usa_medicacao) {
+        setMensagemErro("Informe se faz uso de medicação contínua.");
+        return false;
+      }
+    }
+
+    if (etapa === 4) {
+      if (!formData.sono) {
+        setMensagemErro("Selecione como está seu sono.");
+        return false;
+      }
+
+      if (!formData.atividade_fisica) {
+        setMensagemErro("Selecione a frequência de atividade física.");
+        return false;
+      }
+
+      if (!formData.consumo_alcool) {
+        setMensagemErro("Selecione o consumo de álcool.");
+        return false;
+      }
+
+      if (!formData.tabagismo) {
+        setMensagemErro("Selecione a opção de tabagismo.");
+        return false;
+      }
+    }
+
+    if (etapa === 5) {
+      if (!formData.consentimento) {
+        setMensagemErro("Você precisa concordar com o termo para enviar.");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const avancar = () => {
-    if (etapa < totalEtapas) setEtapa(etapa + 1);
+    if (!validarEtapa()) return;
+
+    if (etapa < totalEtapas) {
+      setEtapa((prev) => prev + 1);
+      setMensagemErro("");
+      setMensagemSucesso("");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const voltar = () => {
-    if (etapa > 1) setEtapa(etapa - 1);
+    if (etapa > 1) {
+      setEtapa((prev) => prev - 1);
+      setMensagemErro("");
+      setMensagemSucesso("");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMensagemErro("");
+    setMensagemSucesso("");
+
+    if (!validarEtapa()) return;
+
+    try {
+      setEnviando(true);
+
+      const { error } = await supabase.from("respostas_pre_consulta").insert([
+        {
+          nome_completo: formData.nome_completo.trim(),
+          idade: formData.idade ? Number(formData.idade) : null,
+          cidade_estado: formData.cidade_estado.trim(),
+          profissao: formData.profissao.trim(),
+          telefone_whatsapp: formData.telefone_whatsapp.trim(),
+          motivo_consulta: formData.motivo_consulta,
+          tempo_queixa: formData.tempo_queixa,
+          intensidade: formData.intensidade ? Number(formData.intensidade) : null,
+          diagnostico_medico:
+            formData.possui_diagnostico === "Sim"
+              ? formData.diagnostico_medico.trim()
+              : "",
+          medicacao_continua:
+            formData.usa_medicacao === "Sim"
+              ? formData.medicacao_continua.trim()
+              : "",
+          sono: formData.sono,
+          atividade_fisica: formData.atividade_fisica,
+          consumo_alcool: formData.consumo_alcool,
+          tabagismo: formData.tabagismo,
+          consentimento: formData.consentimento,
+        },
+      ]);
+
+      if (error) {
+        throw error;
+      }
+
+      setMensagemSucesso(
+        "Questionário enviado com sucesso. Obrigada pelas informações."
+      );
+      setFormData(initialFormData);
+      setEtapa(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error("Erro ao enviar questionário:", error);
+      setMensagemErro(
+        "Não foi possível enviar o questionário agora. Tente novamente em instantes."
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -60,7 +279,19 @@ export default function Questionario() {
             </p>
           </div>
 
-          <form className="space-y-8">
+          {mensagemErro && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {mensagemErro}
+            </div>
+          )}
+
+          {mensagemSucesso && (
+            <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              {mensagemSucesso}
+            </div>
+          )}
+
+          <form className="space-y-8" onSubmit={handleSubmit}>
             {etapa === 1 && (
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
@@ -69,6 +300,9 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
+                    name="nome_completo"
+                    value={formData.nome_completo}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="Digite seu nome"
                   />
@@ -80,6 +314,9 @@ export default function Questionario() {
                   </label>
                   <input
                     type="number"
+                    name="idade"
+                    value={formData.idade}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="Ex: 32"
                   />
@@ -91,6 +328,9 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
+                    name="cidade_estado"
+                    value={formData.cidade_estado}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="Ex: Vitória / ES"
                   />
@@ -102,6 +342,9 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
+                    name="profissao"
+                    value={formData.profissao}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="Ex: Professora"
                   />
@@ -113,6 +356,9 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
+                    name="telefone_whatsapp"
+                    value={formData.telefone_whatsapp}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="(00) 00000-0000"
                   />
@@ -126,15 +372,28 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Qual o principal motivo da consulta?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="motivo_consulta"
+                    value={formData.motivo_consulta}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Ansiedade</option>
-                    <option>Tristeza ou desânimo</option>
-                    <option>Estresse ou sobrecarga</option>
-                    <option>Problemas de sono</option>
-                    <option>Dificuldade de concentração</option>
-                    <option>Avaliação geral de saúde</option>
-                    <option>Outro</option>
+                    <option value="Ansiedade">Ansiedade</option>
+                    <option value="Tristeza ou desânimo">
+                      Tristeza ou desânimo
+                    </option>
+                    <option value="Estresse ou sobrecarga">
+                      Estresse ou sobrecarga
+                    </option>
+                    <option value="Problemas de sono">Problemas de sono</option>
+                    <option value="Dificuldade de concentração">
+                      Dificuldade de concentração
+                    </option>
+                    <option value="Avaliação geral de saúde">
+                      Avaliação geral de saúde
+                    </option>
+                    <option value="Outro">Outro</option>
                   </select>
                 </div>
 
@@ -142,12 +401,17 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Há quanto tempo isso acontece?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="tempo_queixa"
+                    value={formData.tempo_queixa}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Menos de 1 mês</option>
-                    <option>1 a 3 meses</option>
-                    <option>3 a 6 meses</option>
-                    <option>Mais de 6 meses</option>
+                    <option value="Menos de 1 mês">Menos de 1 mês</option>
+                    <option value="1 a 3 meses">1 a 3 meses</option>
+                    <option value="3 a 6 meses">3 a 6 meses</option>
+                    <option value="Mais de 6 meses">Mais de 6 meses</option>
                   </select>
                 </div>
 
@@ -159,6 +423,9 @@ export default function Questionario() {
                     type="number"
                     min="0"
                     max="10"
+                    name="intensidade"
+                    value={formData.intensidade}
+                    onChange={handleInputChange}
                     className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
                     placeholder="Digite um número de 0 a 10"
                   />
@@ -172,10 +439,15 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Você possui algum diagnóstico médico?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="possui_diagnostico"
+                    value={formData.possui_diagnostico}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Não</option>
-                    <option>Sim</option>
+                    <option value="Não">Não</option>
+                    <option value="Sim">Sim</option>
                   </select>
                 </div>
 
@@ -185,7 +457,11 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
-                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                    name="diagnostico_medico"
+                    value={formData.diagnostico_medico}
+                    onChange={handleInputChange}
+                    disabled={formData.possui_diagnostico !== "Sim"}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition disabled:cursor-not-allowed disabled:opacity-60 focus:border-slate-400"
                     placeholder="Ex: hipertensão, diabetes, asma..."
                   />
                 </div>
@@ -194,10 +470,15 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Faz uso de medicação contínua?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="usa_medicacao"
+                    value={formData.usa_medicacao}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Não</option>
-                    <option>Sim</option>
+                    <option value="Não">Não</option>
+                    <option value="Sim">Sim</option>
                   </select>
                 </div>
 
@@ -207,7 +488,11 @@ export default function Questionario() {
                   </label>
                   <input
                     type="text"
-                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                    name="medicacao_continua"
+                    value={formData.medicacao_continua}
+                    onChange={handleInputChange}
+                    disabled={formData.usa_medicacao !== "Sim"}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition disabled:cursor-not-allowed disabled:opacity-60 focus:border-slate-400"
                     placeholder="Ex: nome e dose"
                   />
                 </div>
@@ -220,12 +505,17 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Como está seu sono atualmente?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="sono"
+                    value={formData.sono}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Bom</option>
-                    <option>Regular</option>
-                    <option>Ruim</option>
-                    <option>Insônia frequente</option>
+                    <option value="Bom">Bom</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Ruim">Ruim</option>
+                    <option value="Insônia frequente">Insônia frequente</option>
                   </select>
                 </div>
 
@@ -233,12 +523,23 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Você pratica atividade física?
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="atividade_fisica"
+                    value={formData.atividade_fisica}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Não</option>
-                    <option>1–2 vezes por semana</option>
-                    <option>3–4 vezes por semana</option>
-                    <option>5 ou mais vezes por semana</option>
+                    <option value="Não">Não</option>
+                    <option value="1–2 vezes por semana">
+                      1–2 vezes por semana
+                    </option>
+                    <option value="3–4 vezes por semana">
+                      3–4 vezes por semana
+                    </option>
+                    <option value="5 ou mais vezes por semana">
+                      5 ou mais vezes por semana
+                    </option>
                   </select>
                 </div>
 
@@ -246,11 +547,16 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Consumo de álcool
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="consumo_alcool"
+                    value={formData.consumo_alcool}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Não</option>
-                    <option>Ocasionalmente</option>
-                    <option>Frequentemente</option>
+                    <option value="Não">Não</option>
+                    <option value="Ocasionalmente">Ocasionalmente</option>
+                    <option value="Frequentemente">Frequentemente</option>
                   </select>
                 </div>
 
@@ -258,11 +564,16 @@ export default function Questionario() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Tabagismo
                   </label>
-                  <select className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400">
+                  <select
+                    name="tabagismo"
+                    value={formData.tabagismo}
+                    onChange={handleInputChange}
+                    className="w-full rounded-2xl border border-slate-300 bg-[#f5f5f6] px-4 py-3 outline-none transition focus:border-slate-400"
+                  >
                     <option value="">Selecione</option>
-                    <option>Não</option>
-                    <option>Sim</option>
-                    <option>Ex-fumante</option>
+                    <option value="Não">Não</option>
+                    <option value="Sim">Sim</option>
+                    <option value="Ex-fumante">Ex-fumante</option>
                   </select>
                 </div>
               </div>
@@ -299,7 +610,13 @@ export default function Questionario() {
                 </div>
 
                 <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-700">
-                  <input type="checkbox" className="mt-1" />
+                  <input
+                    type="checkbox"
+                    name="consentimento"
+                    checked={formData.consentimento}
+                    onChange={handleInputChange}
+                    className="mt-1"
+                  />
                   <span>Li e concordo com as informações acima.</span>
                 </label>
               </div>
@@ -309,7 +626,7 @@ export default function Questionario() {
               <button
                 type="button"
                 onClick={voltar}
-                disabled={etapa === 1}
+                disabled={etapa === 1 || enviando}
                 className="rounded-2xl border border-slate-300 bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Voltar
@@ -319,16 +636,18 @@ export default function Questionario() {
                 <button
                   type="button"
                   onClick={avancar}
-                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:bg-slate-800"
+                  disabled={enviando}
+                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Próxima etapa
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:bg-slate-800"
+                  disabled={enviando}
+                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Enviar questionário
+                  {enviando ? "Enviando..." : "Enviar questionário"}
                 </button>
               )}
             </div>
