@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Reset básico */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: #020617; /* slate-950 */
+  color: white;
+}
+
+/* Melhor renderização de texto */
+
+:root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links */
+
+a {
+  text-decoration: none;
+}
+
+/* Inputs */
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
