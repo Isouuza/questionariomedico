@@ -350,14 +350,7 @@ export default function MobilePacientes() {
     ? calcularPrioridade(selecionado)
     : null;
 
-  const totalPacientes = dadosFiltrados.length;
-  const totalPrioridadeAlta = dadosFiltrados.filter(
-    (item) => calcularPrioridade(item).label === "Alta"
-  ).length;
-  const totalComDiagnostico = dadosFiltrados.filter(temDiagnostico).length;
-  const totalComMedicacao = dadosFiltrados.filter(usaMedicacao).length;
-  const totalComSinaisEmocionais =
-    dadosFiltrados.filter(possuiSinaisEmocionais).length;
+  
 
   function abrirPaciente(item: RespostaPreConsulta) {
     setSelecionado(item);

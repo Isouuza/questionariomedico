@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
-  Cigarette,
   Clock3,
   HeartHandshake,
   HeartPulse,
@@ -11,7 +10,6 @@ import {
   Sparkles,
   Stethoscope,
   Users,
-  Wine,
 } from "lucide-react";
 
 import { supabase } from "../../../lib/supabase";
