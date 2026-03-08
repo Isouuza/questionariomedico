@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import PainelMedica from "./PainelMedica";
+import PainelMedica from "./painel/PainelMedica";
 import PainelMedicaMobile from "./PainelMedicaMobile";
 
 function getIsMobile() {
