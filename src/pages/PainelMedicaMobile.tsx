@@ -8,11 +8,9 @@ import {
   Cigarette,
   Clock3,
   Download,
-  Filter,
   HeartHandshake,
   HeartPulse,
   Home,
-  Loader2,
   Mail,
   MapPin,
   Moon,
@@ -22,13 +20,10 @@ import {
   Settings2,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   Stethoscope,
   UserRound,
   Users,
-  Wine,
   LayoutGrid,
-  FileText,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 

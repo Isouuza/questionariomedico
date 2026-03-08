@@ -283,31 +283,6 @@ function CheckCard({
   );
 }
 
-function EtapaBadge({
-  etapa,
-  titulo,
-  ativa,
-}: {
-  etapa: number;
-  titulo: string;
-  ativa: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border px-3 py-2 transition ${
-        ativa
-          ? "border-slate-900 bg-slate-900 text-white"
-          : "border-white/70 bg-white/60 text-slate-500"
-      }`}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em]">
-        Etapa {etapa}
-      </p>
-      <p className="mt-1 text-sm font-medium">{titulo}</p>
-    </div>
-  );
-}
-
 export default function Questionario() {
   const navigate = useNavigate();
 
