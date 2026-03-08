@@ -52,8 +52,6 @@ type RespostaPreConsulta = {
 
   origem_paciente?: string | null;
   origem_paciente_outros?: string | null;
-
-  consentimento: boolean;
 };
 
 type PrioridadeInfo = {
@@ -383,13 +381,10 @@ export default function MobileFichaPaciente({
                     )}
 
                     {paciente.origem_paciente && (
-                      <Tag variant="accent">{paciente.origem_paciente}</Tag>
-                    )}
-                    {paciente.diagnostico_medico?.trim() && <Tag>Diagnóstico</Tag>}
-                    {paciente.medicacao_continua?.trim() && <Tag>Medicação</Tag>}
-                    {paciente.consentimento && (
-                      <Tag variant="soft">Consentimento válido</Tag>
-                    )}
+  <Tag variant="accent">{paciente.origem_paciente}</Tag>
+)}
+{paciente.diagnostico_medico?.trim() && <Tag>Diagnóstico</Tag>}
+{paciente.medicacao_continua?.trim() && <Tag>Medicação</Tag>}
                   </div>
                 </div>
               </div>
@@ -571,33 +566,7 @@ export default function MobileFichaPaciente({
               </div>
             </Bloco>
 
-            <Bloco
-              titulo="Consentimento"
-              subtitulo="Situação do uso das informações enviadas."
-              icon={ShieldCheck}
-            >
-              <div
-                className={`rounded-[22px] border px-4 py-4 ${
-                  paciente.consentimento
-                    ? "border-emerald-200 bg-[linear-gradient(180deg,#f6fcf8_0%,#eef8f1_100%)]"
-                    : "border-amber-200 bg-[linear-gradient(180deg,#fffaf2_0%,#fdf3e3_100%)]"
-                }`}
-              >
-                <p
-                  className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${
-                    paciente.consentimento ? "text-emerald-700" : "text-amber-700"
-                  }`}
-                >
-                  Situação
-                </p>
 
-                <p className="mt-2 text-sm leading-6 text-[#2a312c]">
-                  {paciente.consentimento
-                    ? "Paciente autorizou o uso das informações para avaliação clínica e condução da consulta."
-                    : "Paciente ainda não registrou consentimento válido."}
-                </p>
-              </div>
-            </Bloco>
           </div>
         </div>
       </div>

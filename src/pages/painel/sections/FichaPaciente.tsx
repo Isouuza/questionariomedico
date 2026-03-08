@@ -52,7 +52,7 @@ type RespostaPreConsulta = {
   origem_paciente?: string | null;
   origem_paciente_outros?: string | null;
 
-  consentimento: boolean;
+  
 };
 
 type PrioridadeInfo = {
@@ -318,7 +318,7 @@ export default function FichaPaciente({
             {paciente.origem_paciente && <Tag variant="accent">{paciente.origem_paciente}</Tag>}
             {paciente.diagnostico_medico?.trim() && <Tag>Diagnóstico</Tag>}
             {paciente.medicacao_continua?.trim() && <Tag>Medicação</Tag>}
-            {paciente.consentimento && <Tag variant="soft">Consentimento válido</Tag>}
+            
           </div>
         </div>
       </div>
@@ -500,33 +500,6 @@ export default function FichaPaciente({
           </div>
         </SectionCard>
 
-        <SectionCard
-          titulo="Consentimento"
-          subtitulo="Situação do uso das informações enviadas."
-          icon={ShieldCheck}
-        >
-          <div
-            className={`rounded-[24px] border px-5 py-5 shadow-[0_12px_30px_rgba(15,22,18,0.06)] ${
-              paciente.consentimento
-                ? "border-emerald-200 bg-[linear-gradient(180deg,#f6fcf8_0%,#eef8f1_100%)]"
-                : "border-amber-200 bg-[linear-gradient(180deg,#fffaf2_0%,#fdf3e3_100%)]"
-            }`}
-          >
-            <p
-              className={`text-[11px] font-semibold uppercase tracking-[0.22em] ${
-                paciente.consentimento ? "text-emerald-700" : "text-amber-700"
-              }`}
-            >
-              Situação
-            </p>
-
-            <p className="mt-3 text-[15px] leading-8 text-[#2a312c]">
-              {paciente.consentimento
-                ? "Paciente autorizou o uso das informações para avaliação clínica e condução da consulta."
-                : "Paciente ainda não registrou consentimento válido."}
-            </p>
-          </div>
-        </SectionCard>
       </div>
     </div>
   );

@@ -194,6 +194,8 @@ function calcularPrioridade(item: RespostaPreConsulta): PrioridadeInfo {
   };
 }
 
+
+
 function exportarCSV(dados: RespostaPreConsulta[]) {
   const headers = [
     "Data de envio",
