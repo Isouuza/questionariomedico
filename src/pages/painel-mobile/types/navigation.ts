@@ -1,0 +1,1 @@
+export type AbaMobile = "visao-geral" | "pacientes" | "configuracoes";
