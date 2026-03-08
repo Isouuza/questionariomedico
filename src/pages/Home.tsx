@@ -1,41 +1,116 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Clock3, ShieldCheck, Stethoscope } from "lucide-react";
+import {
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  Stethoscope,
+} from "lucide-react";
+
+function InfoMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="border-t border-white/10 pt-5">
+      <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#b89a5f]">
+        {label}
+      </p>
+      <p className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#f4efe6]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function EditorialBlock({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="border-t border-white/8 py-6">
+      <h3 className="text-[28px] font-semibold leading-tight tracking-[-0.04em] text-[#f5f1e8]">
+        {title}
+      </h3>
+      <p className="mt-4 max-w-2xl text-[16px] leading-8 text-[#d7d0c4]/82">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function JourneyStep({
+  index,
+  title,
+  description,
+}: {
+  index: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="relative pl-20">
+      <div className="absolute left-0 top-0 flex h-12 w-12 items-center justify-center border border-[#b89a5f]/30 bg-[#b89a5f]/10 text-sm font-semibold text-[#e3cf9f]">
+        {index}
+      </div>
+
+      <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.03em] text-[#1a211c]">
+        {title}
+      </h3>
+      <p className="mt-3 max-w-md text-[15px] leading-8 text-[#505950]">
+        {description}
+      </p>
+    </div>
+  );
+}
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <main className="min-h-screen bg-[#f3f5f7] text-slate-800">
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.95),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(226,232,240,0.55),transparent_30%)]" />
+    <main className="min-h-screen bg-[#111713] text-white">
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(184,154,95,0.10),transparent_22%),linear-gradient(180deg,#111713_0%,#182019_48%,#101612_100%)]" />
 
-        <div className="relative mx-auto max-w-6xl px-6 py-10 md:px-10 md:py-14">
-          <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+      <section className="relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-6 pb-16 pt-8 md:px-10 xl:px-12">
+          <header className="flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-[#d8c18c] backdrop-blur-xl">
+              <Stethoscope className="h-3.5 w-3.5" />
+              Pré-consulta médica
+            </div>
+
+            <div className="flex h-11 w-11 items-center justify-center border border-white/10 bg-white/[0.03] text-[#d8c18c]">
+              <Sparkles className="h-4 w-4" />
+            </div>
+          </header>
+
+          <div className="mt-14 grid items-start gap-14 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                <Stethoscope className="h-4 w-4" />
-                Pré-consulta médica
+              <div className="inline-flex items-center gap-2 border border-[#b89a5f]/25 bg-[#b89a5f]/10 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-[#e3cf9f]">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Atendimento mais preparado
               </div>
 
-              <p className="mt-8 text-sm font-medium uppercase tracking-[0.22em] text-slate-500">
-                Questionário inicial
-              </p>
-
-              <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight tracking-tight text-slate-950 md:text-6xl">
-                Um início de consulta mais simples, humano e organizado.
+              <h1 className="mt-7 max-w-4xl text-6xl font-semibold leading-[0.94] tracking-[-0.065em] text-[#f5f1e8] xl:text-7xl">
+                Uma forma mais elegante de começar a consulta.
               </h1>
 
-              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
-                Antes da consulta, você responde um breve questionário com
-                informações importantes sobre sua saúde. Isso ajuda a tornar o
-                atendimento mais objetivo, cuidadoso e individualizado.
+              <p className="mt-7 max-w-2xl text-[18px] leading-9 text-[#d7d0c4]/84">
+                Antes do atendimento, o paciente responde um questionário breve
+                para que a médica compreenda melhor seu contexto, seu momento e
+                suas necessidades com mais profundidade, clareza e cuidado.
               </p>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-10 flex flex-wrap gap-4">
                 <button
                   type="button"
                   onClick={() => navigate("/questionario")}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 py-4 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(15,23,42,0.16)] transition hover:-translate-y-0.5 hover:bg-slate-800"
+                  className="inline-flex min-h-[58px] items-center justify-center gap-2 bg-[#b89a5f] px-7 py-4 text-sm font-semibold text-[#182018] shadow-[0_18px_40px_rgba(184,154,95,0.22)] transition hover:-translate-y-0.5"
                 >
                   Começar questionário
                   <ArrowRight className="h-4 w-4" />
@@ -45,126 +120,157 @@ export default function Home() {
                   type="button"
                   onClick={() =>
                     document
-                      .getElementById("como-funciona")
+                      .getElementById("visao-geral")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  className="inline-flex min-h-[58px] items-center justify-center border border-white/10 bg-white/[0.03] px-7 py-4 text-sm font-semibold text-[#f5f1e8] transition hover:bg-white/[0.05]"
                 >
-                  Saiba como funciona
+                  Conhecer melhor
                 </button>
               </div>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <Clock3 className="h-4 w-4" />
-                    <p className="text-sm font-medium">3 a 5 minutos</p>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Preenchimento rápido e simples.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <ShieldCheck className="h-4 w-4" />
-                    <p className="text-sm font-medium">Sigilo e cuidado</p>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Informações tratadas com confidencialidade.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <Stethoscope className="h-4 w-4" />
-                    <p className="text-sm font-medium">Pré-avaliação clínica</p>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    Mais clareza antes da consulta.
-                  </p>
-                </div>
+              <div className="mt-14 grid max-w-3xl grid-cols-3 gap-6">
+                <InfoMetric label="Tempo" value="3–5 min" />
+                <InfoMetric label="Formato" value="Desktop + Mobile" />
+                <InfoMetric label="Sigilo" value="Protegido" />
               </div>
             </div>
 
-            <div className="lg:pl-6">
-              <div className="rounded-[32px] border border-slate-200 bg-white p-7 shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:p-8">
-                <p className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">
+            <div className="lg:pt-10">
+              <section className="border-t border-[#b89a5f]/20 pt-7">
+                <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#b89a5f]">
                   Profissional responsável
                 </p>
 
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+                <h2 className="mt-5 text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-[#f5f1e8]">
                   Dra. Brenda de Souza Fernandes
                 </h2>
 
-                <p className="mt-3 text-sm text-slate-600">CRM-ES 23053</p>
+                <p className="mt-3 text-sm text-[#d9c58e]">CRM-ES 23053</p>
 
-                <div className="mt-8 space-y-4 border-t border-slate-100 pt-6">
-                  <p className="text-sm leading-7 text-slate-600">
-                    Residente em Medicina de Família e Comunidade.
-                  </p>
+                <div className="mt-10 space-y-6">
+                  <div className="border-t border-white/8 pt-6">
+                    <p className="text-[16px] leading-8 text-[#d7d0c4]/82">
+                      Residente em Medicina de Família e Comunidade.
+                    </p>
+                  </div>
 
-                  <p className="text-sm leading-7 text-slate-600">
-                    Pós-graduanda em Psiquiatria.
-                  </p>
+                  <div className="border-t border-white/8 pt-6">
+                    <p className="text-[16px] leading-8 text-[#d7d0c4]/82">
+                      Pós-graduanda em Psiquiatria.
+                    </p>
+                  </div>
 
-                  <div className="rounded-2xl bg-slate-50 p-4">
-                    <p className="text-sm leading-7 text-slate-600">
-                      Este formulário foi pensado para preparar melhor a
-                      consulta e acolher cada paciente de forma mais atenta e
-                      individualizada.
+                  <div className="border-t border-[#b89a5f]/15 pt-6">
+                    <p className="text-[16px] leading-8 text-[#efe4c8]/86">
+                      Este pré-atendimento foi pensado para tornar a consulta
+                      mais organizada, mais humana e mais precisa desde o
+                      primeiro contato.
                     </p>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           </div>
 
-          <div
-            id="como-funciona"
-            className="mt-10 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm md:p-8"
+          <section
+            id="visao-geral"
+            className="mt-24 border-t border-white/10 pt-4"
           >
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-8 xl:grid-cols-[1fr_0.9fr]">
               <div>
-                <p className="text-sm font-medium uppercase tracking-[0.18em] text-slate-500">
-                  Etapa 1
-                </p>
-                <h3 className="mt-3 text-lg font-semibold text-slate-900">
-                  Você preenche o questionário
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Responde perguntas breves sobre sua saúde, rotina e motivo do
-                  atendimento.
-                </p>
+                <EditorialBlock
+                  title="Mais contexto antes do encontro."
+                  description="As respostas ajudam a médica a compreender melhor a rotina, as queixas e os pontos mais importantes da saúde do paciente antes mesmo da consulta começar."
+                />
+
+                <EditorialBlock
+                  title="Um atendimento mais individualizado."
+                  description="Quando a consulta não começa do zero, sobra mais espaço para escuta qualificada, raciocínio clínico e condução cuidadosa."
+                />
+
+                <EditorialBlock
+                  title="Simples para o paciente. Valioso para a consulta."
+                  description="Tudo foi pensado para funcionar com clareza, fluidez e uma experiência discreta, confortável e direta, seja no computador ou no celular."
+                />
               </div>
 
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.18em] text-slate-500">
-                  Etapa 2
+              <div className="overflow-hidden border border-[#d6c7a0]/30 bg-[#f5f1e8] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.20)]">
+                <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#9a7f4a]">
+                  Fluxo da experiência
                 </p>
-                <h3 className="mt-3 text-lg font-semibold text-slate-900">
-                  A médica analisa previamente
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  As informações ajudam a organizar melhor a avaliação e a
-                  consulta.
-                </p>
-              </div>
 
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.18em] text-slate-500">
-                  Etapa 3
-                </p>
-                <h3 className="mt-3 text-lg font-semibold text-slate-900">
-                  Atendimento mais objetivo
+                <h3 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.05em] text-[#1b221d]">
+                  Tudo foi desenhado para parecer natural.
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Isso permite um encontro mais claro, cuidadoso e
-                  individualizado desde o início.
+
+                <p className="mt-5 max-w-xl text-[16px] leading-8 text-[#505950]">
+                  O paciente preenche com tranquilidade, a médica analisa
+                  previamente e a consulta acontece com muito mais direção,
+                  presença e qualidade.
                 </p>
+
+                <div className="mt-10 space-y-10">
+                  <JourneyStep
+                    index="1"
+                    title="O paciente responde com tranquilidade"
+                    description="O questionário reúne informações relevantes sobre saúde, rotina e momento atual de forma simples, objetiva e acolhedora."
+                  />
+
+                  <JourneyStep
+                    index="2"
+                    title="A médica chega mais preparada"
+                    description="As respostas oferecem um panorama inicial que ajuda a priorizar temas, perceber sinais e organizar melhor a avaliação."
+                  />
+
+                  <JourneyStep
+                    index="3"
+                    title="A consulta ganha outra qualidade"
+                    description="O encontro fica mais humano, objetivo e individualizado, porque já existe uma base real para começar."
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </section>
+
+          <section className="mt-24 border-t border-white/10 pt-10">
+            <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto]">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[#b89a5f]">
+                  Começar agora
+                </p>
+
+                <h2 className="mt-5 max-w-4xl text-5xl font-semibold leading-[0.96] tracking-[-0.06em] text-[#f5f1e8] xl:text-6xl">
+                  Poucos minutos que melhoram toda a experiência da consulta.
+                </h2>
+
+                <p className="mt-6 max-w-2xl text-[18px] leading-9 text-[#d7d0c4]/82">
+                  O questionário pode ser preenchido agora mesmo, com calma,
+                  segurança e praticidade, em uma experiência pensada para ser
+                  elegante, simples e útil.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 lg:min-w-[320px]">
+                <button
+                  type="button"
+                  onClick={() => navigate("/questionario")}
+                  className="inline-flex min-h-[60px] items-center justify-center gap-2 bg-[#b89a5f] px-8 py-4 text-sm font-semibold text-[#182018] shadow-[0_18px_40px_rgba(184,154,95,0.24)] transition hover:-translate-y-0.5"
+                >
+                  Iniciar questionário
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/acesso-painel")}
+                  className="inline-flex min-h-[56px] items-center justify-center border border-white/10 bg-white/[0.03] px-8 py-4 text-sm font-semibold text-[#f5f1e8] transition hover:bg-white/[0.05]"
+                >
+                  Acesso restrito
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </main>
