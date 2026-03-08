@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
-  Cigarette,
   Clock3,
   HeartHandshake,
   HeartPulse,
@@ -11,7 +10,6 @@ import {
   Sparkles,
   Stethoscope,
   Users,
-  Wine,
 } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
 import CardResumo from "../components/CardResumo";
@@ -520,36 +518,7 @@ export default function VisaoGeral() {
               </div>
             </BlocoPainel>
 
-            <BlocoPainel
-              titulo="Leitura da aba"
-              subtitulo="Como usar esta visão sem sobrecarga"
-            >
-              <div className="space-y-4 px-5 py-5 text-sm leading-7 text-[#d6d1c7]">
-                <div className="flex items-start gap-3">
-                  <HeartPulse className="mt-1 h-4 w-4 shrink-0 text-[#e6c27a]" />
-                  <p>
-                    Esta tela serve como ponto de partida, não como análise
-                    completa.
-                  </p>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <Wine className="mt-1 h-4 w-4 shrink-0 text-[#e6c27a]" />
-                  <p>
-                    O objetivo aqui é enxergar padrões e novos envios com mais
-                    rapidez.
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Cigarette className="mt-1 h-4 w-4 shrink-0 text-[#e6c27a]" />
-                  <p>
-                    Para leitura detalhada e decisão clínica individual, use a
-                    aba de pacientes.
-                  </p>
-                </div>
-              </div>
-            </BlocoPainel>
           </div>
         </section>
       </div>
